@@ -10,13 +10,17 @@ import NavBar from "../components/NavBar";
 import { getSession } from "next-auth/react";
 import getUuidByString from "uuid-by-string";
 
+
 const Home: NextPage = () => {
   const [userList, setUserList] = useState<any>();
   const [activeChat, setActiveChat] = useState<any>();
   const [session, setSession] = useState<any>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const [fetchedMessages, setFetchedMessaged] = useState<any>();
-  
+  const [darkMode, setDarkMode] = useState(false)
+  const inputBoxRef = useRef(null);
+  const chatBoxRef = useRef<any>();
+;  
 
   useEffect(() => {
     const fetchUsers = fetch("/api/users")
@@ -50,7 +54,6 @@ const Home: NextPage = () => {
       // console.log(msgData);
       handleMessageSend(msgData).then(() => fetchMessages(session.user, activeChat));
     }
-    // console.log(fetchedMessages);
     return;
   };
 
@@ -66,6 +69,7 @@ const Home: NextPage = () => {
   };
 
   const handleChangeActiveChat = (user: any) => {
+    setFetchedMessaged([]);
     setActiveChat(user);
   };
 
@@ -80,21 +84,27 @@ const Home: NextPage = () => {
         console.log(data.data)
         console.log(activeChat);
       });
+      
   };
+
+  const handleThemeChange = () => {
+    setDarkMode(!darkMode)
+  }
+
 
   useEffect(() => {
     if (activeChat) fetchMessages(session.user, activeChat);
   }, [activeChat]);
 
   return (
-    <>
+    <div className={`${darkMode && 'dark bg-gray-900 text-white'} h-screen flex flex-col justify-center`}>
       <Head>
         <title>Baatein</title>
       </Head>
       <div
-        className={`main-container flex flex-col items-center px-10 py-10 gap-10 md:w-[1000px] m-auto`}
+        className={`dark:bg-gray-900 dark:text-white main-container flex flex-col items-center px-10 py-10 gap-10 md:w-[1000px] m-auto h-[800px]`}
       >
-        <NavBar />
+        <NavBar onClick={handleThemeChange} theme={darkMode} />
         <div className="body-container w-full h-[80vh] flex flex-row">
           <div className="contacts-container w-[250px]">
             <div className="search-bar-container w-full flex flex-col items-center justify-center h-[12%]">
@@ -102,12 +112,12 @@ const Home: NextPage = () => {
                 type="text"
                 name="search-bar"
                 id="search-bar"
-                className="transition-all duration-500 focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-sm outline-none h-8"
+                className="transition-all duration-500 focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-sm outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500"
                 placeholder="John Doe"
               />
             </div>
             <div className="contact-list-container h-[88%] overflow-y-scroll flex flex-col">
-              {session &&
+              {(userList && session) &&
                 userList
                   .filter((user) => user.email !== session.user.email)
                   .map((user, index) => (
@@ -120,7 +130,7 @@ const Home: NextPage = () => {
                   ))}
             </div>
           </div>
-          <div className="divider bg-slate-300 h-100 border-l"></div>
+          <div className="divider bg-slate-300 h-100 border-l dark:bg-gray-900 dark:border-purple-700"></div>
           <div className="chat-parent-container w-[750px]">
             <div className="chat-title-container flex flex-row items-center gap-3 px-5 w-[100%] h-14 justify-between">
               {activeChat && (
@@ -144,7 +154,7 @@ const Home: NextPage = () => {
                 <LanguageSelector />
               </div>
             </div>
-            <div className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3 px-3">
+            <div className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3 px-3" ref={chatBoxRef}>
               {fetchedMessages &&
                 fetchedMessages.map((msg, index) => (
                   <MessageBox
@@ -165,22 +175,25 @@ const Home: NextPage = () => {
                 name="message-box"
                 id="message-box"
                 placeholder="Type Message Here..."
-                className="drop-shadow focus:shadow-md transition-all duration-300 h-8 px-2 py-1 outline-none w-[600px] text-sm"
+                className="drop-shadow focus:shadow-md transition-all duration-300 h-8 px-2 py-1 outline-none w-[600px] text-sm dark:bg-gray-900 dark:border dark:border-purple-400"
                 onChange={(e) => {
                   setInputMessage(e.target.value);
                 }}
                 onKeyDown={(e) => {
                   handleKeyPress(e);
                   if (e.key === "Enter") e.currentTarget.value = "";
-                  console.log(e.key);
                 }}
                 autoComplete='off'
+                ref={inputBoxRef}
+                onFocus={() => {
+                  chatBoxRef.current.scrollIntoView()
+                }}
               />
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
