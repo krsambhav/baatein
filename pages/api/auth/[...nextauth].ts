@@ -5,6 +5,7 @@ import clientPromise from "../../../lib/mongodb"
 
 export default NextAuth({
   // Configure one or more authentication providers
+  secret:process.env.SECRET,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
@@ -12,6 +13,5 @@ export default NextAuth({
     }), 
     // ...add more providers here
   ],
-  secret:process.env.NEXT_PUBLIC_SECRET,
   adapter: MongoDBAdapter(clientPromise),
 })
