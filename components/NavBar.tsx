@@ -21,14 +21,14 @@ export default function NavBar({theme, onClick}:{theme?:any, onClick?:any}) {
       </Link>
       <div className=" flex flex-row items-center gap-5">
         <DarkModeSwitch
-          checked={!theme}
+          checked={theme}
           onChange={onClick}
           size={18}
-          moonColor={"black"}
-          sunColor={"white"}
+          moonColor={"white"}
+          sunColor={"black"}
         />
         {session?.status == "authenticated" && (
-          <span className="cursor-pointer" onClick={() => signOut()}>
+          <span className="cursor-pointer rotate-180" onClick={() => signOut()}>
             <MdOutlineLogout />
           </span>
         )}

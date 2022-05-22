@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function MessageBox({ msgType, imageURL, text }) {
+export default function MessageBox({ msgType, imageURL, text, time }) {
   return (
     <>
       {msgType == "left" ? (
@@ -18,9 +18,20 @@ export default function MessageBox({ msgType, imageURL, text }) {
           <div className="text-container bg-gradient-to-r from-blue-100 to-pink-100 px-3 py-2 rounded-xl rounded-bl-none dark:text-black">
             {text}
           </div>
+          <div className="timestamp-container text-xs text-gray-300">
+            {`${new Date(time).getDate() < 10 ? 0 : ""}${new Date(
+              time
+            ).getDate()}/${new Date(time).getMonth() < 10 ? 0 : ""}${
+              new Date(time).getMonth() + 1
+            } ${new Date(
+              time
+            ).getHours()%12}:${
+              new Date(time).getMinutes() < 10 ? 0 : ""
+            }${new Date(time).getMinutes()}`}
+          </div>
         </div>
       ) : (
-        <div className="msg-right self-end flex flex-row-reverse w-[200px] items-center gap-3 pr-3 dark:text-black">
+        <div className="msg-right self-end flex flex-row-reverse w-[300px] items-center gap-3 pr-3 dark:text-black">
           {/* <div className="image-container w-8 z-10">
             <Image
               src={imageURL}
@@ -31,8 +42,20 @@ export default function MessageBox({ msgType, imageURL, text }) {
               className="rounded-full"
             />
           </div> */}
+
           <div className="text-container bg-gradient-to-r from-blue-100 to-pink-100 px-3 py-2 rounded-xl rounded-br-none dark:text-black">
             {text}
+          </div>
+          <div className="timestamp-container text-xs text-gray-300">
+            {`${new Date(time).getDate() < 10 ? 0 : ""}${new Date(
+              time
+            ).getDate()}/${new Date(time).getMonth() < 10 ? 0 : ""}${
+              new Date(time).getMonth() + 1
+            } ${new Date(
+              time
+            ).getHours()%12}:${
+              new Date(time).getMinutes() < 10 ? 0 : ""
+            }${new Date(time).getMinutes()}`}
           </div>
         </div>
       )}

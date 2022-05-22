@@ -10,17 +10,18 @@ import NavBar from "../components/NavBar";
 import { getSession } from "next-auth/react";
 import getUuidByString from "uuid-by-string";
 
-
 const Home: NextPage = () => {
   const [userList, setUserList] = useState<any>();
   const [activeChat, setActiveChat] = useState<any>();
   const [session, setSession] = useState<any>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const [fetchedMessages, setFetchedMessaged] = useState<any>();
-  const [darkMode, setDarkMode] = useState(false)
+  const [darkMode, setDarkMode] = useState(false);
   const inputBoxRef = useRef(null);
   const chatBoxRef = useRef<any>();
-;  
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+
 
   useEffect(() => {
     const fetchUsers = fetch("/api/users")
@@ -52,7 +53,9 @@ const Home: NextPage = () => {
         msgText: inputMessage,
       };
       // console.log(msgData);
-      handleMessageSend(msgData).then(() => fetchMessages(session.user, activeChat));
+      handleMessageSend(msgData).then(() =>
+        fetchMessages(session.user, activeChat)
+      );
     }
     return;
   };
@@ -77,40 +80,48 @@ const Home: NextPage = () => {
     const cf_uid = getUuidByString(currentUser.email + friend.email);
     const fc_uid = getUuidByString(friend.email + currentUser.email);
     // console.log(cf_uid, fc_uid);
-      fetch("/api/chat/" + cf_uid + fc_uid)
+    fetch("/api/chat/" + cf_uid + fc_uid)
       .then((res) => res.json())
       .then((data) => {
-        setFetchedMessaged(data.data)
-        console.log(data.data)
+        setFetchedMessaged(data.data);
+        console.log(data.data);
         console.log(activeChat);
       });
-      
   };
 
   useEffect(() => {
-    if (localStorage.getItem('theme') == 'true')
-     {
-       setDarkMode(true)
-     }
-  }, [])
+    if (localStorage.getItem("theme") == "true") {
+      setDarkMode(true);
+    }
+  }, []);
 
   const handleThemeChange = () => {
-    setDarkMode(!darkMode)
-    localStorage.setItem("theme", String(!darkMode))
-  }
-
+    setDarkMode(!darkMode);
+    localStorage.setItem("theme", String(!darkMode));
+  };
 
   useEffect(() => {
     if (activeChat) fetchMessages(session.user, activeChat);
   }, [activeChat]);
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [fetchMessages]);
+
   return (
-    <div className={`${darkMode && 'dark bg-gray-900 text-white'} h-screen flex flex-col justify-center`}>
+    <div
+      className={`${
+        darkMode && "dark bg-gray-900 text-white"
+      } h-screen flex flex-col justify-center  transition-all duration-300`}
+    >
       <Head>
         <title>Baatein</title>
       </Head>
       <div
-        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center px-10 py-10 gap-10 w-screen hidden md:flex md:w-[1000px] m-auto h-[800px]`}
+        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center px-10 py-10 gap-10 w-screen hidden md:flex md:w-[1000px] m-auto h-[800px] dark:transition-all dark:duration-300`}
       >
         <NavBar onClick={handleThemeChange} theme={darkMode} />
         <div className="body-container w-full h-[80vh] flex flex-row">
@@ -120,12 +131,13 @@ const Home: NextPage = () => {
                 type="text"
                 name="search-bar"
                 id="search-bar"
-                className="transition-all duration-500 focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-sm outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500"
+                className="focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-sm outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500 transition-all duration-300"
                 placeholder="John Doe"
               />
             </div>
             <div className="contact-list-container h-[88%] overflow-y-scroll flex flex-col">
-              {(userList && session) &&
+              {userList &&
+                session &&
                 userList
                   .filter((user) => user.email !== session.user.email)
                   .map((user, index) => (
@@ -162,7 +174,10 @@ const Home: NextPage = () => {
                 <LanguageSelector />
               </div>
             </div>
-            <div className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3 px-3" ref={chatBoxRef}>
+            <div
+              className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3 px-3"
+              ref={chatBoxRef}
+            >
               {fetchedMessages &&
                 fetchedMessages.map((msg, index) => (
                   <MessageBox
@@ -174,8 +189,10 @@ const Home: NextPage = () => {
                         : activeChat.image
                     }
                     text={msg.msgText}
+                    time={msg.timestamp}
                   />
                 ))}
+              <div style={{ marginBottom: 10 }} ref={messagesEndRef} />
             </div>
             <div className="chat-input-container h-16 w-full flex flex-col items-center justify-center">
               <input
@@ -191,10 +208,10 @@ const Home: NextPage = () => {
                   handleKeyPress(e);
                   if (e.key === "Enter") e.currentTarget.value = "";
                 }}
-                autoComplete='off'
+                autoComplete="off"
                 ref={inputBoxRef}
                 onFocus={() => {
-                  chatBoxRef.current.scrollIntoView()
+                  chatBoxRef.current.scrollIntoView();
                 }}
               />
             </div>
