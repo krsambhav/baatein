@@ -16,6 +16,7 @@ const Home: NextPage = () => {
   const [session, setSession] = useState<any>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const [fetchedMessages, setFetchedMessaged] = useState<any>();
+
   useEffect(() => {
     const fetchUsers = fetch("/api/users")
       .then((res) => res.json())
@@ -35,16 +36,6 @@ const Home: NextPage = () => {
     );
   }, []);
 
-  const fetchMessages = () => {
-    let uid = getUuidByString(session?.user?.email + activeChat.email);
-    fetch("/api/chat/" + uid)
-      .then((res) => res.json())
-      .then((data) => {
-        setFetchedMessaged(data);
-        // console.log(data);
-      });
-  };
-
   const handleKeyPress = (event) => {
     if (event.keyCode === 13) {
       const msgData = {
@@ -56,8 +47,9 @@ const Home: NextPage = () => {
         msgText: inputMessage,
       };
       // console.log(msgData);
-      handleMessageSend(msgData).then(fetchMessages)
+      handleMessageSend(msgData).then();
     }
+    console.log(fetchedMessages);
     return;
   };
 
@@ -72,14 +64,26 @@ const Home: NextPage = () => {
     // console.log(data);
   };
 
-  const handleChangeActiveChat = (user:any) => {
+  const handleChangeActiveChat = (user: any) => {
     setActiveChat(user);
-  }
+  };
+
+  const fetchMessages = (currentUser, friend) => {
+    const cf_uid = getUuidByString(currentUser.email + friend.email);
+    const fc_uid = getUuidByString(friend.email + currentUser.email);
+    // console.log(cf_uid, fc_uid);
+    fetch("/api/chat/" + cf_uid + fc_uid)
+      .then((res) => res.json())
+      .then((data) => {
+        setFetchedMessaged(data.data)
+        console.log(data.data)
+        console.log(activeChat);
+      });
+  };
 
   useEffect(() => {
-    activeChat && fetchMessages()
-  }, [activeChat])
-  
+    if (activeChat) fetchMessages(session.user, activeChat);
+  }, [activeChat]);
 
   return (
     <>
@@ -141,12 +145,12 @@ const Home: NextPage = () => {
             </div>
             <div className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3">
               {fetchedMessages &&
-                fetchedMessages.data.map((msg, index) => (
+                fetchedMessages.map((msg, index) => (
                   <MessageBox
                     key={index}
-                    msgType={msg.msgType == "sent" ? "right" : "left"}
+                    msgType={msg.from === activeChat.email ? "left" : "right"}
                     imageURL={
-                      msg.msgType == "sent"
+                      msg.from !== activeChat.email
                         ? session.user.image
                         : activeChat.image
                     }
@@ -166,8 +170,7 @@ const Home: NextPage = () => {
                 }}
                 onKeyDown={(e) => {
                   handleKeyPress(e);
-                  if(e.key === 'Enter' )
-                    e.currentTarget.value = ''
+                  if (e.key === "Enter") e.currentTarget.value = "";
                   console.log(e.key);
                 }}
               />

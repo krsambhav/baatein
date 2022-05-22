@@ -13,8 +13,9 @@ export default async function handler(req, res) {
       res.json(newChat);
       break;
     case "GET":
-      const chats = await db.collection('chatData').find({}).toArray();
-      res.json({ status: 200, data: chats });
+      console.log(req.body)
+      // const chats = await db.collection('chatData').find({$or:[{'uid':}]}).toArray();
+      // res.json({ status: 200, data: chats });
       break;
   }
 }
