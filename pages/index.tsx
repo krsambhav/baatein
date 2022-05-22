@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import PersonCard from "../components/PersonCard";
 import LanguageSelector from "../components/LanguageSelector";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import MessageBox from "../components/MessageBox";
 import NavBar from "../components/NavBar";
@@ -16,6 +16,7 @@ const Home: NextPage = () => {
   const [session, setSession] = useState<any>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const [fetchedMessages, setFetchedMessaged] = useState<any>();
+  
 
   useEffect(() => {
     const fetchUsers = fetch("/api/users")
@@ -47,9 +48,9 @@ const Home: NextPage = () => {
         msgText: inputMessage,
       };
       // console.log(msgData);
-      handleMessageSend(msgData).then();
+      handleMessageSend(msgData).then(() => fetchMessages(session.user, activeChat));
     }
-    console.log(fetchedMessages);
+    // console.log(fetchedMessages);
     return;
   };
 
@@ -72,7 +73,7 @@ const Home: NextPage = () => {
     const cf_uid = getUuidByString(currentUser.email + friend.email);
     const fc_uid = getUuidByString(friend.email + currentUser.email);
     // console.log(cf_uid, fc_uid);
-    fetch("/api/chat/" + cf_uid + fc_uid)
+      fetch("/api/chat/" + cf_uid + fc_uid)
       .then((res) => res.json())
       .then((data) => {
         setFetchedMessaged(data.data)
@@ -143,7 +144,7 @@ const Home: NextPage = () => {
                 <LanguageSelector />
               </div>
             </div>
-            <div className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3">
+            <div className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3 px-3">
               {fetchedMessages &&
                 fetchedMessages.map((msg, index) => (
                   <MessageBox
@@ -173,6 +174,7 @@ const Home: NextPage = () => {
                   if (e.key === "Enter") e.currentTarget.value = "";
                   console.log(e.key);
                 }}
+                autoComplete='off'
               />
             </div>
           </div>
