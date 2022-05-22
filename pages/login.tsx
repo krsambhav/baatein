@@ -4,9 +4,6 @@ import { FcGoogle } from "react-icons/fc";
 import {getSession, signIn, signOut, useSession} from 'next-auth/react';
 
 export default function login(params) {
-  const { data: session, status } = useSession()
-  const loading = status === "loading"
-  // console.log(session?.user?.email);
   return (
     <div
       className={`main-container flex flex-col items-center px-10 py-10 gap-44 md:w-[1000px] m-auto`}
@@ -34,5 +31,4 @@ export async function getServerSideProps(context:any) {
 
   if (session) return { redirect: {destination: "/", permanent: false} };
   return {props: {session}}
-
 }
