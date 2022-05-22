@@ -87,8 +87,16 @@ const Home: NextPage = () => {
       
   };
 
+  useEffect(() => {
+    if (localStorage.getItem('theme') == 'true')
+     {
+       setDarkMode(true)
+     }
+  }, [])
+
   const handleThemeChange = () => {
     setDarkMode(!darkMode)
+    localStorage.setItem("theme", String(!darkMode))
   }
 
 
@@ -102,7 +110,7 @@ const Home: NextPage = () => {
         <title>Baatein</title>
       </Head>
       <div
-        className={`dark:bg-gray-900 dark:text-white main-container flex flex-col items-center px-10 py-10 gap-10 md:w-[1000px] m-auto h-[800px]`}
+        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center px-10 py-10 gap-10 w-screen hidden md:flex md:w-[1000px] m-auto h-[800px]`}
       >
         <NavBar onClick={handleThemeChange} theme={darkMode} />
         <div className="body-container w-full h-[80vh] flex flex-row">
@@ -192,6 +200,9 @@ const Home: NextPage = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="mobile-banner self-center text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 cursor-pointer md:hidden">
+        Please Open On PC
       </div>
     </div>
   );

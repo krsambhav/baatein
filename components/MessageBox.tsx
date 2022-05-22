@@ -5,7 +5,7 @@ export default function MessageBox({ msgType, imageURL, text }) {
     <>
       {msgType == "left" ? (
         <div className="msg-left flex flex-row w-[200px] items-center gap-3 pl-3 dark:text-black">
-          <div className="image-container w-8">
+          {/* <div className="image-container w-8">
             <Image
               src={imageURL}
               layout="responsive"
@@ -14,14 +14,14 @@ export default function MessageBox({ msgType, imageURL, text }) {
               quality={1}
               className="rounded-full"
             />
-          </div>
+          </div> */}
           <div className="text-container bg-gradient-to-r from-blue-100 to-pink-100 px-3 py-2 rounded-xl rounded-bl-none dark:text-black">
             {text}
           </div>
         </div>
       ) : (
         <div className="msg-right self-end flex flex-row-reverse w-[200px] items-center gap-3 pr-3 dark:text-black">
-          <div className="image-container w-8 z-10">
+          {/* <div className="image-container w-8 z-10">
             <Image
               src={imageURL}
               layout="responsive"
@@ -30,7 +30,7 @@ export default function MessageBox({ msgType, imageURL, text }) {
               quality={1}
               className="rounded-full"
             />
-          </div>
+          </div> */}
           <div className="text-container bg-gradient-to-r from-blue-100 to-pink-100 px-3 py-2 rounded-xl rounded-br-none dark:text-black">
             {text}
           </div>
