@@ -6,7 +6,7 @@ import { DarkModeSwitch } from "react-toggle-dark-mode";
 import { MdOutlineLogout } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function NavBar({theme, onClick}) {
+export default function NavBar({theme, onClick}:{theme:any, onClick:any}) {
   const session = useSession();
   // console.log(session);
   const userPic = session?.data?.user?.image;
