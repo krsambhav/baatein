@@ -13,6 +13,7 @@ export default async function handler(req, res) {
     TargetLanguageCode: bodyObject.targetLanguage,
     Text: bodyObject.msgText
   }
+  console.log(params)
   translate.translateText(params, (err, data) => {
     res.json({ status: 200, data: data.TranslatedText });
   })

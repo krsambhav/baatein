@@ -9,7 +9,7 @@ import MessageBox from "../components/MessageBox";
 import NavBar from "../components/NavBar";
 import { getSession, useSession } from "next-auth/react";
 import getUuidByString from "uuid-by-string";
-import {IoIosArrowDown} from 'react-icons/io';
+import { IoIosArrowDown } from "react-icons/io";
 
 const Home = () => {
   const [userList, setUserList] = useState<any>();
@@ -28,7 +28,7 @@ const Home = () => {
   // console.log(session);
 
   const handleSendMessage = (event) => {
-    if (event.keyCode === 13 && inputMessage != '') {
+    if (event.keyCode === 13 && inputMessage != "") {
       const msgData = {
         uid: getUuidByString(session?.user?.email + activeChat.email),
         from: session?.user?.email,
@@ -74,6 +74,8 @@ const Home = () => {
   };
 
   const handleChangeActiveChat = (user: any) => {
+    if(activeChat === user)
+      return;
     localStorage.setItem("activeChat", String(JSON.stringify(user)));
     setFetchedMessaged([]);
     setActiveChat(user);
@@ -88,6 +90,8 @@ const Home = () => {
       .then((res) => res.json())
       .then((data) => {
         setFetchedMessaged(data.data);
+        // refreshMessage()
+        // refreshMessage()
         // console.log(data.data);
         // console.log(activeChat);
       });
@@ -110,6 +114,13 @@ const Home = () => {
     setDarkMode(!darkMode);
     localStorage.setItem("theme", String(!darkMode));
   };
+
+  useEffect(() => {
+    console.log(123);
+    setTimeout(() => {
+      refreshMessage()
+    }, 3000)
+  },[])
 
   useEffect(() => {
     fetch("/api/users")
@@ -152,6 +163,14 @@ const Home = () => {
     const aC = JSON.parse(localStorage.getItem("activeChat") || "null");
     if (aC != "null") setActiveChat(aC);
   }, []);
+
+  const refreshMessage = () => {
+    if(activeChat)
+    {
+      console.log("Message Refreshed");
+      fetchMessages(session?.user, activeChat);
+    }
+  };
 
   return (
     <div
@@ -221,26 +240,29 @@ const Home = () => {
                   </div>
                 </div>
               )}
-              <IoIosArrowDown className={`md:hidden ${showContacts && 'rotate-180'}`} onClick={() => setShowContacts(!showContacts)} />
+              <IoIosArrowDown
+                className={`md:hidden ${showContacts && "rotate-180"}`}
+                onClick={() => setShowContacts(!showContacts)}
+              />
               {showContacts && (
                 <>
-                <div className="mobile-contacts-container fixed top-48 w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
-                {userList &&
-                session &&
-                userList
-                  .filter((user) => user.email !== session?.user?.email)
-                  .map((user, index) => (
-                    <PersonCard
-                      key={index}
-                      imageURL={user.image}
-                      name={user.name}
-                      onClick={() => {
-                        handleChangeActiveChat(user)
-                        setShowContacts(false)
-                      }}
-                    />
-                  ))}
-                </div>
+                  <div className="mobile-contacts-container fixed top-48 w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
+                    {userList &&
+                      session &&
+                      userList
+                        .filter((user) => user.email !== session?.user?.email)
+                        .map((user, index) => (
+                          <PersonCard
+                            key={index}
+                            imageURL={user.image}
+                            name={user.name}
+                            onClick={() => {
+                              handleChangeActiveChat(user);
+                              setShowContacts(false);
+                            }}
+                          />
+                        ))}
+                  </div>
                 </>
               )}
               <div className="chat-lang-container w-[160px] md:w-[200px] ">
@@ -251,7 +273,9 @@ const Home = () => {
               </div>
             </div>
             <div
-              className={`chat-box-container mt-3 md:mt-0 h-[60vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 transition-all duration-150 ${showContacts && 'blur-lg'}`}
+              className={`chat-box-container mt-3 md:mt-0 h-[60vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 transition-all duration-150 ${
+                showContacts && "blur-lg"
+              }`}
               ref={chatBoxRef}
             >
               {fetchedMessages &&
