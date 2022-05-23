@@ -6,7 +6,7 @@ import { DarkModeSwitch } from "react-toggle-dark-mode";
 import { MdOutlineLogout } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function NavBar({theme, onClick}:{theme?:any, onClick?:any}) {
+export default function NavBar({theme, onClick, showThemeButton}:{theme?:any, onClick?:any, showThemeButton?:any}) {
   const session = useSession();
   // console.log(session);
   const userPic = session?.data?.user?.image;
@@ -20,13 +20,13 @@ export default function NavBar({theme, onClick}:{theme?:any, onClick?:any}) {
         </a>
       </Link>
       <div className=" flex flex-row items-center gap-5">
-        <DarkModeSwitch
+        {showThemeButton && <DarkModeSwitch
           checked={theme}
           onChange={onClick}
           size={18}
           moonColor={"white"}
           sunColor={"black"}
-        />
+        />}
         {session?.status == "authenticated" && (
           <span className="cursor-pointer rotate-180" onClick={() => signOut()}>
             <MdOutlineLogout />
