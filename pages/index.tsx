@@ -174,7 +174,7 @@ const Home = () => {
           theme={darkMode}
           showThemeButton={true}
         />
-        <div className="body-container w-full md:h-[80vh] flex flex-row mt-5 md:mt-0">
+        <div className="body-container w-full h-[80vh] md:h-[80vh] flex flex-row mt-5 md:mt-0">
           <div className="contacts-container hidden md:block md:w-[250px]">
             <div className="search-bar-container w-full flex flex-col items-center justify-center h-[12%]">
               <input
@@ -251,7 +251,7 @@ const Home = () => {
               </div>
             </div>
             <div
-              className={`chat-box-container mt-3 md:mt-0 h-[65vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 ${showContacts && 'blur-lg'}`}
+              className={`chat-box-container mt-3 md:mt-0 h-[60vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 ${showContacts && 'blur-lg'}`}
               ref={chatBoxRef}
             >
               {fetchedMessages &&
@@ -271,7 +271,7 @@ const Home = () => {
                 ))}
               <div style={{ marginBottom: 10 }} ref={messagesEndRef} />
             </div>
-            <div className="chat-input-container h-16 w-full flex flex-col items-center justify-center">
+            <div className="chat-input-container h-[50px] md:h-16 w-full flex flex-col items-center justify-center">
               {activeChat && (
                 <input
                   type="text"
