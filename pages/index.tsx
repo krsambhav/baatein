@@ -157,7 +157,7 @@ const Home = () => {
     <div
       className={`${
         darkMode && "dark bg-gray-900 text-white"
-      } h-screen flex flex-col justify-center  transition-all duration-300`}
+      } h-screen flex flex-col justify-center items-center transition-all duration-300`}
     >
       <Head>
         <title>Baatein</title>
@@ -251,7 +251,7 @@ const Home = () => {
               </div>
             </div>
             <div
-              className="chat-box-container h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3"
+              className="chat-box-container mt-3 md:mt-0 h-[65vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3"
               ref={chatBoxRef}
             >
               {fetchedMessages &&
