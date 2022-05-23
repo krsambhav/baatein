@@ -18,6 +18,7 @@ const Home = () => {
   const [inputMessage, setInputMessage] = useState<string>("");
   const [fetchedMessages, setFetchedMessaged] = useState<any>();
   const [darkMode, setDarkMode] = useState(false);
+  const [showContacts, setShowContacts] = useState(false);
   const inputBoxRef = useRef(null);
   const chatBoxRef = useRef<any>();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -220,7 +221,28 @@ const Home = () => {
                   </div>
                 </div>
               )}
-              <IoIosArrowDown className="md:hidden" />
+              <IoIosArrowDown className="md:hidden" onClick={() => setShowContacts(!showContacts)} />
+              {showContacts && (
+                <>
+                <div className="mobile-contacts-container fixed top-48 w-[90%] backdrop-blur-lg">
+                {userList &&
+                session &&
+                userList
+                  .filter((user) => user.email !== session?.user?.email)
+                  .map((user, index) => (
+                    <PersonCard
+                      key={index}
+                      imageURL={user.image}
+                      name={user.name}
+                      onClick={() => {
+                        handleChangeActiveChat(user)
+                        setShowContacts(false)
+                      }}
+                    />
+                  ))}
+                </div>
+                </>
+              )}
               <div className="chat-lang-container w-[160px] md:w-[200px] ">
                 <LanguageSelector
                   onLangChange={handleLanguageChange}
