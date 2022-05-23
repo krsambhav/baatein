@@ -157,7 +157,7 @@ const Home = () => {
     <div
       className={`${
         darkMode && "dark bg-gray-900 text-white"
-      } h-screen flex flex-col justify-center items-center transition-all duration-300`}
+      } h-[95vh] flex flex-col justify-center items-center transition-all duration-300`}
     >
       <Head>
         <title>Baatein</title>
