@@ -165,11 +165,11 @@ const Home = () => {
         />
       </Head>
       <div
-        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center px-10 py-10 gap-10 w-screen md:flex md:w-[1000px] m-auto h-[800px] dark:transition-all dark:duration-300`}
+        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center md:px-10 md:py-10 md:gap-10 w-screen md:flex md:w-[1000px] m-auto md:h-[800px] dark:transition-all dark:duration-300 md:shadow-xl`}
       >
         <NavBar onClick={handleThemeChange} theme={darkMode} showThemeButton={true} />
-        <div className="body-container w-full h-[80vh] flex flex-row">
-          <div className="contacts-container w-[250px]">
+        <div className="body-container w-full md:h-[80vh] flex flex-row mt-5 md:mt-0">
+          <div className="contacts-container hidden md:block md:w-[250px]">
             <div className="search-bar-container w-full flex flex-col items-center justify-center h-[12%]">
               <input
                 type="text"
@@ -195,8 +195,8 @@ const Home = () => {
                   ))}
             </div>
           </div>
-          <div className="divider bg-slate-300 h-100 border-l dark:bg-gray-900 dark:border-purple-700"></div>
-          <div className="chat-parent-container w-[750px]">
+          {/* <div className="divider hidden md:block bg-slate-300 h-100 border-l dark:bg-gray-900 dark:border-purple-700"></div> */}
+          <div className="chat-parent-container w-screen md:w-[750px]">
             <div className="chat-title-container flex flex-row items-center gap-3 px-5 w-[100%] h-14 justify-between">
               {activeChat && (
                 <div className="person-card-container flex flex-row items-center gap-3">
@@ -215,7 +215,7 @@ const Home = () => {
                   </div>
                 </div>
               )}
-              <div className="chat-lang-container w-[200px]">
+              <div className="chat-lang-container w-[160px] md:w-[200px] ">
                 <LanguageSelector
                   onLangChange={handleLanguageChange}
                   userEmail={session?.user?.email}
@@ -223,7 +223,7 @@ const Home = () => {
               </div>
             </div>
             <div
-              className="chat-box-container h-[550px] overflow-y-scroll pt-5 text-sm flex flex-col gap-3 px-3"
+              className="chat-box-container h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3"
               ref={chatBoxRef}
             >
               {fetchedMessages &&
@@ -250,7 +250,7 @@ const Home = () => {
                   name="message-box"
                   id="message-box"
                   placeholder="Type Message Here..."
-                  className="drop-shadow focus:shadow-md transition-all duration-300 h-8 px-2 py-1 outline-none w-[600px] text-sm dark:bg-gray-900 dark:border dark:border-purple-400"
+                  className="drop-shadow focus:shadow-md transition-all duration-300 h-8 px-2 py-1 outline-none w-[90vw] md:w-[600px] text-sm dark:bg-gray-900 dark:border dark:border-purple-400"
                   onChange={(e) => {
                     setInputMessage(e.target.value);
                   }}
@@ -281,7 +281,7 @@ export default Home;
 export async function getServerSideProps(context: any) {
   const session = await getSession(context);
 
-  // if (!session)
-  //   return { redirect: { destination: "/login", permanent: false } };
+  if (!session)
+    return { redirect: { destination: "/login", permanent: false } };
   return { props: { session } };
 }

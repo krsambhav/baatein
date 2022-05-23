@@ -4,7 +4,7 @@ export default function MessageBox({ msgType, imageURL, text1, text2, time }) {
   return (
     <>
       {msgType == "left" ? (
-        <div className="msg-left flex flex-row w-[400px] items-center gap-3 pl-3 dark:text-black">
+        <div className="msg-left flex flex-row w-[300px] md:w-[400px] items-center gap-3 pl-3 dark:text-black">
           {/* <div className="image-container w-8">
             <Image
               src={imageURL}
@@ -34,7 +34,7 @@ export default function MessageBox({ msgType, imageURL, text1, text2, time }) {
           </div>
         </div>
       ) : (
-        <div className="msg-right self-end flex flex-row-reverse w-[400px] items-center gap-3 pr-3 dark:text-black">
+        <div className="msg-right self-end flex flex-row-reverse w-[300px] md:w-[400px] items-center gap-3 pr-3 dark:text-black">
           {/* <div className="image-container w-8 z-10">
             <Image
               src={imageURL}

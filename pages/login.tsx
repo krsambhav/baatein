@@ -17,12 +17,12 @@ export default function login(params) {
           rel="stylesheet"
         />
       </Head>
-      <NavBar />
-      <div className="login-container flex flex-col gap-20 " onClick={() => signIn('google')}>
-        <div className="login-title title text-3xl font-normal text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600">
+      <NavBar showThemeButton={false} />
+      <div className="login-container flex flex-col gap-20 items-center" onClick={() => signIn('google')}>
+        <div className="login-title title text-2xl font-normal text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600">
           Please Login To Continue
         </div>
-        <div className="login-btn-container flex flex-row justify-center">
+        <div className="login-btn-container flex flex-row justify-center border">
           <div className="login-btn w-fit px-3 py-1 flex flex-row items-center gap-2 justify-center font-thin shadow-md  cursor-pointer hover:bg-black hover:text-white hover:shadow-xl transition-all duration-200 select-none">
             <div className="logo">
               <FcGoogle />
