@@ -221,7 +221,7 @@ const Home = () => {
                   </div>
                 </div>
               )}
-              <IoIosArrowDown className="md:hidden" onClick={() => setShowContacts(!showContacts)} />
+              <IoIosArrowDown className={`md:hidden ${showContacts && 'rotate-180'}`} onClick={() => setShowContacts(!showContacts)} />
               {showContacts && (
                 <>
                 <div className="mobile-contacts-container fixed top-48 w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
