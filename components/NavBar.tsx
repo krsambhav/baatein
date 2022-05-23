@@ -11,7 +11,7 @@ export default function NavBar({theme, onClick, showThemeButton}:{theme?:any, on
   // console.log(session);
   const userPic = session?.data?.user?.image;
   return (
-    <div className="nav-bar flex flex-row justify-between md:w-full px-3 md:px-0 w-[100vw]">
+    <div className="nav-bar flex flex-row justify-between md:w-full px-3 md:px-0 w-[100vw] mt-5 md:mt-0">
       <Link href={"/"}>
         <a>
           <div className="title text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 cursor-pointer">
