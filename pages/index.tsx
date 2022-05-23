@@ -28,7 +28,7 @@ const Home = () => {
   // console.log(session);
 
   const handleSendMessage = (event) => {
-    if (event.keyCode === 13) {
+    if (event.keyCode === 13 && inputMessage != '') {
       const msgData = {
         uid: getUuidByString(session?.user?.email + activeChat.email),
         from: session?.user?.email,
