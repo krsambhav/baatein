@@ -157,7 +157,7 @@ const Home = () => {
     <div
       className={`${
         darkMode && "dark bg-gray-900 text-white"
-      } h-[95vh] flex flex-col justify-center items-center transition-all duration-300`}
+      } h-[90vh] flex flex-col justify-center items-center transition-all duration-300`}
     >
       <Head>
         <title>Baatein</title>
@@ -167,7 +167,7 @@ const Home = () => {
         />
       </Head>
       <div
-        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center md:px-10 md:py-10 md:gap-10 w-screen md:flex md:w-[1000px] m-auto h-[95vh] md:h-[800px] dark:transition-all dark:duration-300 md:shadow-xl`}
+        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center md:px-10 md:py-10 md:gap-10 w-screen md:flex md:w-[1000px] m-auto h-[90vh] md:h-[800px] dark:transition-all dark:duration-300 md:shadow-xl`}
       >
         <NavBar
           onClick={handleThemeChange}
