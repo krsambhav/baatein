@@ -224,7 +224,7 @@ const Home = () => {
               <IoIosArrowDown className="md:hidden" onClick={() => setShowContacts(!showContacts)} />
               {showContacts && (
                 <>
-                <div className="mobile-contacts-container fixed top-48 w-[90%] backdrop-blur-lg">
+                <div className="mobile-contacts-container fixed top-48 w-[90%] backdrop-blur-lg dark:bg-gray-900 dark:border rounded-lg dark:border-red-500">
                 {userList &&
                 session &&
                 userList
