@@ -9,7 +9,7 @@ import MessageBox from "../components/MessageBox";
 import NavBar from "../components/NavBar";
 import { getSession, useSession } from "next-auth/react";
 import getUuidByString from "uuid-by-string";
-import {IoIosArrowDown} from 'react-icons/io';
+import { IoIosArrowDown } from "react-icons/io";
 
 const Home = () => {
   const [userList, setUserList] = useState<any>();
@@ -22,13 +22,13 @@ const Home = () => {
   const inputBoxRef = useRef(null);
   const chatBoxRef = useRef<any>();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const [targetLanguage, setTargetLanguage] = useState<string>("");
+  const [searchBarInput, setSearchBarInput] = useState<string>("");
 
   const session = useSession().data;
   // console.log(session);
 
   const handleSendMessage = (event) => {
-    if (event.keyCode === 13 && inputMessage != '') {
+    if (event.keyCode === 13 && inputMessage != "") {
       const msgData = {
         uid: getUuidByString(session?.user?.email + activeChat.email),
         from: session?.user?.email,
@@ -174,7 +174,7 @@ const Home = () => {
           theme={darkMode}
           showThemeButton={true}
         />
-        <div className="body-container w-full h-[80vh] md:h-[80vh] flex flex-row mt-5 md:mt-0">
+        <div className="body-container w-full h-[80vh] md:h-[80vh] flex flex-row mt-5 md:mt-0 ">
           <div className="contacts-container hidden md:block md:w-[250px]">
             <div className="search-bar-container w-full flex flex-col items-center justify-center h-[12%]">
               <input
@@ -182,26 +182,37 @@ const Home = () => {
                 name="search-bar"
                 id="search-bar"
                 className="focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-xs outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500 transition-all duration-300"
-                placeholder="Search Bar Under Construction"
-                disabled
+                placeholder="Peter Griffin"
+                onChange={(e) => {
+                  setSearchBarInput(e.target.value)
+                }}
               />
             </div>
-            <div className="contact-list-container h-[88%] overflow-y-scroll flex flex-col">
+            <div className="contact-list-container h-[70%] overflow-y-scroll flex flex-col">
               {userList &&
                 session &&
-                userList
-                  .filter((user) => user.email !== session?.user?.email)
-                  .map((user, index) => (
-                    <PersonCard
-                      key={index}
-                      imageURL={user.image}
-                      name={user.name}
-                      onClick={() => handleChangeActiveChat(user)}
-                    />
-                  ))}
+                (searchBarInput === '' ? userList
+                .filter((user) => user.email !== session?.user?.email)
+                .map((user, index) => (
+                  <PersonCard
+                    key={index}
+                    imageURL={user.image}
+                    name={user.name}
+                    onClick={() => handleChangeActiveChat(user)}
+                  />
+                )) : userList
+                .filter((user) => user.email !== session?.user?.email).filter((user) => user.name.substring(0,searchBarInput.length).toLowerCase() === searchBarInput.toLowerCase())
+                .map((user, index) => (
+                  <PersonCard
+                    key={index}
+                    imageURL={user.image}
+                    name={user.name}
+                    onClick={() => handleChangeActiveChat(user)}
+                  />
+                )) )}
             </div>
           </div>
-          <div className="divider hidden md:block bg-slate-300 h-100 border-l dark:bg-gray-900 dark:border-purple-700"></div>
+          <div className="divider hidden md:block bg-slate-300 h-[650px] border-l dark:bg-gray-900 dark:border-purple-700 ml-5"></div>
           <div className="chat-parent-container w-screen md:w-[750px]">
             <div className="chat-title-container flex flex-row items-center gap-3 px-5 w-[100%] h-14 justify-between">
               {activeChat && (
@@ -221,26 +232,29 @@ const Home = () => {
                   </div>
                 </div>
               )}
-              <IoIosArrowDown className={`md:hidden ${showContacts && 'rotate-180'}`} onClick={() => setShowContacts(!showContacts)} />
+              <IoIosArrowDown
+                className={`md:hidden ${showContacts && "rotate-180"}`}
+                onClick={() => setShowContacts(!showContacts)}
+              />
               {showContacts && (
                 <>
-                <div className="mobile-contacts-container fixed top-48 w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
-                {userList &&
-                session &&
-                userList
-                  .filter((user) => user.email !== session?.user?.email)
-                  .map((user, index) => (
-                    <PersonCard
-                      key={index}
-                      imageURL={user.image}
-                      name={user.name}
-                      onClick={() => {
-                        handleChangeActiveChat(user)
-                        setShowContacts(false)
-                      }}
-                    />
-                  ))}
-                </div>
+                  <div className="mobile-contacts-container fixed top-48 w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
+                    {userList &&
+                      session &&
+                      userList
+                        .filter((user) => user.email !== session?.user?.email)
+                        .map((user, index) => (
+                          <PersonCard
+                            key={index}
+                            imageURL={user.image}
+                            name={user.name}
+                            onClick={() => {
+                              handleChangeActiveChat(user);
+                              setShowContacts(false);
+                            }}
+                          />
+                        ))}
+                  </div>
                 </>
               )}
               <div className="chat-lang-container w-[160px] md:w-[200px] ">
@@ -251,7 +265,9 @@ const Home = () => {
               </div>
             </div>
             <div
-              className={`chat-box-container mt-3 md:mt-0 h-[60vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 transition-all duration-150 ${showContacts && 'blur-lg'}`}
+              className={`chat-box-container mt-3 md:mt-0 h-[60vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 transition-all duration-150 ${
+                showContacts && "blur-lg"
+              }`}
               ref={chatBoxRef}
             >
               {fetchedMessages &&
