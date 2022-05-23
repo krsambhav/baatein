@@ -224,7 +224,7 @@ const Home = () => {
               <IoIosArrowDown className="md:hidden" onClick={() => setShowContacts(!showContacts)} />
               {showContacts && (
                 <>
-                <div className="mobile-contacts-container fixed top-48 w-[90%] backdrop-blur-lg dark:bg-gray-900 dark:border rounded-lg dark:border-red-500">
+                <div className="mobile-contacts-container fixed top-48 w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
                 {userList &&
                 session &&
                 userList
@@ -251,7 +251,7 @@ const Home = () => {
               </div>
             </div>
             <div
-              className="chat-box-container mt-3 md:mt-0 h-[65vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3"
+              className={`chat-box-container mt-3 md:mt-0 h-[65vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 ${showContacts && 'blur-lg'}`}
               ref={chatBoxRef}
             >
               {fetchedMessages &&
