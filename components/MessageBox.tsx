@@ -1,10 +1,10 @@
 import Image from "next/image";
 
-export default function MessageBox({ msgType, imageURL, text, time }) {
+export default function MessageBox({ msgType, imageURL, text1, text2, time }) {
   return (
     <>
       {msgType == "left" ? (
-        <div className="msg-left flex flex-row w-[200px] items-center gap-3 pl-3 dark:text-black">
+        <div className="msg-left flex flex-row w-[400px] items-center gap-3 pl-3 dark:text-black">
           {/* <div className="image-container w-8">
             <Image
               src={imageURL}
@@ -16,7 +16,9 @@ export default function MessageBox({ msgType, imageURL, text, time }) {
             />
           </div> */}
           <div className="text-container bg-gradient-to-r from-blue-100 to-pink-100 px-3 py-2 rounded-xl rounded-bl-none dark:text-black">
-            {text}
+            {text1}
+            <br />
+            {text2}
           </div>
           <div className="timestamp-container text-xs text-gray-300">
             {`${new Date(time).getDate() < 10 ? 0 : ""}${new Date(
@@ -31,7 +33,7 @@ export default function MessageBox({ msgType, imageURL, text, time }) {
           </div>
         </div>
       ) : (
-        <div className="msg-right self-end flex flex-row-reverse w-[300px] items-center gap-3 pr-3 dark:text-black">
+        <div className="msg-right self-end flex flex-row-reverse w-[400px] items-center gap-3 pr-3 dark:text-black">
           {/* <div className="image-container w-8 z-10">
             <Image
               src={imageURL}
@@ -44,7 +46,10 @@ export default function MessageBox({ msgType, imageURL, text, time }) {
           </div> */}
 
           <div className="text-container bg-gradient-to-r from-blue-100 to-pink-100 px-3 py-2 rounded-xl rounded-br-none dark:text-black">
-            {text}
+          {text1}
+          <br />
+          <br />
+          {text2}
           </div>
           <div className="timestamp-container text-xs text-gray-300">
             {`${new Date(time).getDate() < 10 ? 0 : ""}${new Date(

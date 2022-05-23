@@ -20,8 +20,85 @@ const Home: NextPage = () => {
   const inputBoxRef = useRef(null);
   const chatBoxRef = useRef<any>();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
+  const [targetLanguage, setTargetLanguage] = useState<string>('');
 
+  const handleSendMessage = (event) => {
+    if (event.keyCode === 13) {
+      const msgData = {
+        uid: getUuidByString(session.user.email + activeChat.email),
+        from: session.user.email,
+        to: activeChat.email,
+        timestamp: new Date().toString(),
+        sourceMsg: inputMessage,
+      };
+      // console.log(msgData);
+      handleMessageSend(msgData).then(() =>
+        fetchMessages(session.user, activeChat)
+      );
+    }
+    return;
+  };
 
+  const handleMessageSend = async (message) => {
+    const getTargetLanguage = await fetch('/api/getlang/' + activeChat.email).then(res => res.json()).then(data => data.data[0])
+    console.log(getTargetLanguage);
+    console.log(message);
+    let requestMsgParams = {
+      targetLanguage: getTargetLanguage['lang'],
+      msgText: message.sourceMsg
+    }
+    let requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestMsgParams),
+    };
+    const getTranslatedMessage = await fetch('/api/translate', requestOptions).then(res => res.json()).then(data => data.data)
+    console.log(getTranslatedMessage);
+    requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({...message, targetMsg: getTranslatedMessage}),
+    };
+    const res = await fetch("/api/chats", requestOptions);
+    const data = await res.json();
+    console.log(data);
+  };
+
+  const handleChangeActiveChat = (user: any) => {
+    setFetchedMessaged([]);
+    setActiveChat(user);
+  };
+
+  const fetchMessages = (currentUser, friend) => {
+    const cf_uid = getUuidByString(currentUser.email + friend.email);
+    const fc_uid = getUuidByString(friend.email + currentUser.email);
+    // console.log(cf_uid, fc_uid);
+    fetch("/api/chat/" + cf_uid + fc_uid)
+      .then((res) => res.json())
+      .then((data) => {
+        setFetchedMessaged(data.data);
+        // console.log(data.data);
+        // console.log(activeChat);
+      });
+  };
+
+  const handleLanguageChange = (lang) => {
+    const langData = {
+      email: session.user.email,
+      lang: lang.code
+    }
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(langData),
+    };
+    const res = fetch("/api/lang", requestOptions);
+  }
+
+  const handleThemeChange = () => {
+    setDarkMode(!darkMode);
+    localStorage.setItem("theme", String(!darkMode));
+  };
 
   useEffect(() => {
     const fetchUsers = fetch("/api/users")
@@ -42,63 +119,11 @@ const Home: NextPage = () => {
     );
   }, []);
 
-  const handleKeyPress = (event) => {
-    if (event.keyCode === 13) {
-      const msgData = {
-        uid: getUuidByString(session.user.email + activeChat.email),
-        from: session.user.email,
-        to: activeChat.email,
-        timestamp: new Date().toString(),
-        msgType: "sent",
-        msgText: inputMessage,
-      };
-      // console.log(msgData);
-      handleMessageSend(msgData).then(() =>
-        fetchMessages(session.user, activeChat)
-      );
-    }
-    return;
-  };
-
-  const handleMessageSend = async (message) => {
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(message),
-    };
-    const res = await fetch("/api/chats", requestOptions);
-    const data = await res.json();
-    // console.log(data);
-  };
-
-  const handleChangeActiveChat = (user: any) => {
-    setFetchedMessaged([]);
-    setActiveChat(user);
-  };
-
-  const fetchMessages = (currentUser, friend) => {
-    const cf_uid = getUuidByString(currentUser.email + friend.email);
-    const fc_uid = getUuidByString(friend.email + currentUser.email);
-    // console.log(cf_uid, fc_uid);
-    fetch("/api/chat/" + cf_uid + fc_uid)
-      .then((res) => res.json())
-      .then((data) => {
-        setFetchedMessaged(data.data);
-        console.log(data.data);
-        console.log(activeChat);
-      });
-  };
-
   useEffect(() => {
     if (localStorage.getItem("theme") == "true") {
       setDarkMode(true);
     }
   }, []);
-
-  const handleThemeChange = () => {
-    setDarkMode(!darkMode);
-    localStorage.setItem("theme", String(!darkMode));
-  };
 
   useEffect(() => {
     if (activeChat) fetchMessages(session.user, activeChat);
@@ -107,6 +132,7 @@ const Home: NextPage = () => {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
   useEffect(() => {
     scrollToBottom();
   }, [fetchMessages]);
@@ -171,7 +197,7 @@ const Home: NextPage = () => {
                 </div>
               )}
               <div className="chat-lang-container w-[200px]">
-                <LanguageSelector />
+                <LanguageSelector onLangChange={handleLanguageChange}  />
               </div>
             </div>
             <div
@@ -188,7 +214,8 @@ const Home: NextPage = () => {
                         ? session.user.image
                         : activeChat.image
                     }
-                    text={msg.msgText}
+                    text1={`${msg.sourceMsg}`}
+                    text2={`${msg.targetMsg}`}
                     time={msg.timestamp}
                   />
                 ))}
@@ -205,7 +232,7 @@ const Home: NextPage = () => {
                   setInputMessage(e.target.value);
                 }}
                 onKeyDown={(e) => {
-                  handleKeyPress(e);
+                  handleSendMessage(e);
                   if (e.key === "Enter") e.currentTarget.value = "";
                 }}
                 autoComplete="off"

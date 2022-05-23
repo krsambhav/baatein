@@ -3,20 +3,33 @@ import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 
 const languages = [
-  { name: 'English' },
-  { name: 'Hindi' },
-  { name: 'Bengali' },
-  { name: 'Marathi' },
-  { name: 'Gujarati' },
-  { name: 'Russian' },
+  { name: 'English', code: 'en' },
+  { name: 'Hindi', code:'hi' },
+  { name: 'Bengali', code:'bn' },
+  { name: 'Marathi', code:'mr' },
+  { name: 'Gujarati', code:'gu' },
+  { name: 'Malayalam', code:'ml' },
+  { name: 'Russian', code:'ru' },
+  { name: 'Arabic', code:'ar' },
+  { name: 'Chinese', code:'zh' },
+  { name: 'French', code:'fr' },
+  { name: 'German', code:'de' },
+  { name: 'Irish', code:'ga' },
+  { name: 'Japanese', code:'ja' },
+  { name: 'Spanish', code:'es' },
+  { name: 'Urdu', code:'ur' },
+  { name: 'Tamil', code:'ta' },
 ]
 
-export default function Example() {
+export default function LanguageSelector({onLangChange}) {
   const [selected, setSelected] = useState(languages[0])
 
   return (
     <>
-      <Listbox value={selected} onChange={setSelected}>
+      <Listbox value={selected} onChange={(e) => {
+        setSelected(e);
+        onLangChange(e)
+      }}>
         <div className="relative mt-1">
           <Listbox.Button className="relative w-full cursor-pointer rounded-lg bg-white py-2 pl-3 pr-10 text-left drop-shadow focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm dark:bg-gray-900 dark:border dark:border-purple-500">
             <span className="block truncate">{selected.name}</span>
