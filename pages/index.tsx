@@ -74,6 +74,8 @@ const Home = () => {
   };
 
   const handleChangeActiveChat = (user: any) => {
+    if(activeChat === user)
+      return;
     localStorage.setItem("activeChat", String(JSON.stringify(user)));
     setFetchedMessaged([]);
     setActiveChat(user);
