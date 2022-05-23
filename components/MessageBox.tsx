@@ -16,10 +16,10 @@ export default function MessageBox({ msgType, imageURL, text1, text2, time }) {
             />
           </div> */}
           <div className="text-container bg-gradient-to-r from-blue-100 to-pink-100 px-3 py-2 rounded-xl rounded-bl-none dark:text-black">
-            {text1}
-            <br />
-            <br />
             {text2}
+            <br />
+            <br />
+            {text1}
           </div>
           <div className="timestamp-container text-xs text-gray-300">
             {`${new Date(time).getDate() < 10 ? 0 : ""}${new Date(

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon } from '@heroicons/react/solid'
 
@@ -21,11 +21,21 @@ const languages = [
   { name: 'Tamil', code:'ta' },
 ]
 
-export default function LanguageSelector({onLangChange}) {
-  const [selected, setSelected] = useState(languages[0])
+export default function LanguageSelector({onLangChange, userEmail}) {
+  const [selected, setSelected] = useState<any>()
+  useEffect(() => {
+    fetch('/api/getlang/'+userEmail).then(res => res.json()).then(data => {
+      // console.log(data.data)
+      // console.log(userEmail)
+      const foundLang : any = languages.find(langs => langs.code === data.data[0].lang)
+      setSelected(foundLang)
+    })
+  }, [])
 
   return (
     <>
+    {
+      selected && 
       <Listbox value={selected} onChange={(e) => {
         setSelected(e);
         onLangChange(e)
@@ -79,6 +89,7 @@ export default function LanguageSelector({onLangChange}) {
           </Transition>
         </div>
       </Listbox>
+}
     </>
   )
 }

@@ -7,57 +7,64 @@ import { useEffect, useRef, useState } from "react";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import MessageBox from "../components/MessageBox";
 import NavBar from "../components/NavBar";
-import { getSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import getUuidByString from "uuid-by-string";
 
-const Home: NextPage = () => {
+const Home = () => {
   const [userList, setUserList] = useState<any>();
   const [activeChat, setActiveChat] = useState<any>();
-  const [session, setSession] = useState<any>();
+  // const [session, setSession] = useState<any>();
   const [inputMessage, setInputMessage] = useState<string>("");
   const [fetchedMessages, setFetchedMessaged] = useState<any>();
   const [darkMode, setDarkMode] = useState(false);
   const inputBoxRef = useRef(null);
   const chatBoxRef = useRef<any>();
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
-  const [targetLanguage, setTargetLanguage] = useState<string>('');
+  const [targetLanguage, setTargetLanguage] = useState<string>("");
+
+  const session = useSession().data;
+  // console.log(session);
 
   const handleSendMessage = (event) => {
     if (event.keyCode === 13) {
       const msgData = {
-        uid: getUuidByString(session.user.email + activeChat.email),
-        from: session.user.email,
+        uid: getUuidByString(session?.user?.email + activeChat.email),
+        from: session?.user?.email,
         to: activeChat.email,
         timestamp: new Date().toString(),
         sourceMsg: inputMessage,
       };
       // console.log(msgData);
       handleMessageSend(msgData).then(() =>
-        fetchMessages(session.user, activeChat)
+        fetchMessages(session?.user, activeChat)
       );
     }
     return;
   };
 
   const handleMessageSend = async (message) => {
-    const getTargetLanguage = await fetch('/api/getlang/' + activeChat.email).then(res => res.json()).then(data => data.data[0])
+    const getTargetLanguage = await fetch("/api/getlang/" + activeChat.email)
+      .then((res) => res.json())
+      .then((data) => data.data[0]);
     console.log(getTargetLanguage);
     console.log(message);
     let requestMsgParams = {
-      targetLanguage: getTargetLanguage['lang'],
-      msgText: message.sourceMsg
-    }
+      targetLanguage: getTargetLanguage["lang"],
+      msgText: message.sourceMsg,
+    };
     let requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(requestMsgParams),
     };
-    const getTranslatedMessage = await fetch('/api/translate', requestOptions).then(res => res.json()).then(data => data.data)
+    const getTranslatedMessage = await fetch("/api/translate", requestOptions)
+      .then((res) => res.json())
+      .then((data) => data.data);
     console.log(getTranslatedMessage);
     requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({...message, targetMsg: getTranslatedMessage}),
+      body: JSON.stringify({ ...message, targetMsg: getTranslatedMessage }),
     };
     const res = await fetch("/api/chats", requestOptions);
     const data = await res.json();
@@ -65,8 +72,10 @@ const Home: NextPage = () => {
   };
 
   const handleChangeActiveChat = (user: any) => {
+    localStorage.setItem("activeChat", String(JSON.stringify(user)));
     setFetchedMessaged([]);
     setActiveChat(user);
+    // console.log(user)
   };
 
   const fetchMessages = (currentUser, friend) => {
@@ -84,16 +93,16 @@ const Home: NextPage = () => {
 
   const handleLanguageChange = (lang) => {
     const langData = {
-      email: session.user.email,
-      lang: lang.code
-    }
+      email: session?.user?.email,
+      lang: lang.code,
+    };
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(langData),
     };
     const res = fetch("/api/lang", requestOptions);
-  }
+  };
 
   const handleThemeChange = () => {
     setDarkMode(!darkMode);
@@ -101,22 +110,22 @@ const Home: NextPage = () => {
   };
 
   useEffect(() => {
-    const fetchUsers = fetch("/api/users")
+    fetch("/api/users")
       .then((res) => res.json())
       .then((data) => {
         setUserList(data.data);
         // setActiveChat(data.data[0]);
         return data.data[0];
       });
-    const getSess = getSession().then((data) => {
-      setSession(data);
-      return data;
-    });
-    fetchUsers.then((activeChat) =>
-      getSess.then((session) => {
-        // fetchMessages();
-      })
-    );
+    // const getSess = getSession().then((data) => {
+    //   setSession(data);
+    //   return data;
+    // });
+    // fetchUsers.then((activeChat) =>
+    //   getSess.then((session) => {
+    //     // fetchMessages();
+    //   })
+    // );
   }, []);
 
   useEffect(() => {
@@ -126,7 +135,7 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    if (activeChat) fetchMessages(session.user, activeChat);
+    if (activeChat) fetchMessages(session?.user, activeChat);
   }, [activeChat]);
 
   const scrollToBottom = () => {
@@ -136,6 +145,11 @@ const Home: NextPage = () => {
   useEffect(() => {
     scrollToBottom();
   }, [fetchMessages]);
+
+  useEffect(() => {
+    const aC = JSON.parse(localStorage.getItem("activeChat") || "null");
+    if(aC != "null") setActiveChat(aC);
+  }, []);
 
   return (
     <div
@@ -157,15 +171,16 @@ const Home: NextPage = () => {
                 type="text"
                 name="search-bar"
                 id="search-bar"
-                className="focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-sm outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500 transition-all duration-300"
-                placeholder="John Doe"
+                className="focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-xs outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500 transition-all duration-300"
+                placeholder="Search Bar Under Construction"
+                disabled
               />
             </div>
             <div className="contact-list-container h-[88%] overflow-y-scroll flex flex-col">
               {userList &&
                 session &&
                 userList
-                  .filter((user) => user.email !== session.user.email)
+                  .filter((user) => user.email !== session?.user?.email)
                   .map((user, index) => (
                     <PersonCard
                       key={index}
@@ -197,7 +212,10 @@ const Home: NextPage = () => {
                 </div>
               )}
               <div className="chat-lang-container w-[200px]">
-                <LanguageSelector onLangChange={handleLanguageChange}  />
+                <LanguageSelector
+                  onLangChange={handleLanguageChange}
+                  userEmail={session?.user?.email}
+                />
               </div>
             </div>
             <div
@@ -211,7 +229,7 @@ const Home: NextPage = () => {
                     msgType={msg.from === activeChat.email ? "left" : "right"}
                     imageURL={
                       msg.from !== activeChat.email
-                        ? session.user.image
+                        ? session?.user?.image
                         : activeChat.image
                     }
                     text1={`${msg.sourceMsg}`}
@@ -222,25 +240,27 @@ const Home: NextPage = () => {
               <div style={{ marginBottom: 10 }} ref={messagesEndRef} />
             </div>
             <div className="chat-input-container h-16 w-full flex flex-col items-center justify-center">
-              <input
-                type="text"
-                name="message-box"
-                id="message-box"
-                placeholder="Type Message Here..."
-                className="drop-shadow focus:shadow-md transition-all duration-300 h-8 px-2 py-1 outline-none w-[600px] text-sm dark:bg-gray-900 dark:border dark:border-purple-400"
-                onChange={(e) => {
-                  setInputMessage(e.target.value);
-                }}
-                onKeyDown={(e) => {
-                  handleSendMessage(e);
-                  if (e.key === "Enter") e.currentTarget.value = "";
-                }}
-                autoComplete="off"
-                ref={inputBoxRef}
-                onFocus={() => {
-                  chatBoxRef.current.scrollIntoView();
-                }}
-              />
+              {activeChat && (
+                <input
+                  type="text"
+                  name="message-box"
+                  id="message-box"
+                  placeholder="Type Message Here..."
+                  className="drop-shadow focus:shadow-md transition-all duration-300 h-8 px-2 py-1 outline-none w-[600px] text-sm dark:bg-gray-900 dark:border dark:border-purple-400"
+                  onChange={(e) => {
+                    setInputMessage(e.target.value);
+                  }}
+                  onKeyDown={(e) => {
+                    handleSendMessage(e);
+                    if (e.key === "Enter") e.currentTarget.value = "";
+                  }}
+                  autoComplete="off"
+                  ref={inputBoxRef}
+                  onFocus={() => {
+                    chatBoxRef.current.scrollIntoView();
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
