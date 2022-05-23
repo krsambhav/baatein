@@ -1,8 +1,8 @@
 import {Translate} from 'aws-sdk';
 
 const translate = new Translate({
-  accessKeyId: 'AKIAULQLABZDOIB5FWFT',
-  secretAccessKey: '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',
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: 'ap-south-1'
 })
 
