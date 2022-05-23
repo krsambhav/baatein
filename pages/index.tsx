@@ -9,6 +9,7 @@ import MessageBox from "../components/MessageBox";
 import NavBar from "../components/NavBar";
 import { getSession, useSession } from "next-auth/react";
 import getUuidByString from "uuid-by-string";
+import {IoIosArrowDown} from 'react-icons/io';
 
 const Home = () => {
   const [userList, setUserList] = useState<any>();
@@ -148,7 +149,7 @@ const Home = () => {
 
   useEffect(() => {
     const aC = JSON.parse(localStorage.getItem("activeChat") || "null");
-    if(aC != "null") setActiveChat(aC);
+    if (aC != "null") setActiveChat(aC);
   }, []);
 
   return (
@@ -167,7 +168,11 @@ const Home = () => {
       <div
         className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center md:px-10 md:py-10 md:gap-10 w-screen md:flex md:w-[1000px] m-auto md:h-[800px] dark:transition-all dark:duration-300 md:shadow-xl`}
       >
-        <NavBar onClick={handleThemeChange} theme={darkMode} showThemeButton={true} />
+        <NavBar
+          onClick={handleThemeChange}
+          theme={darkMode}
+          showThemeButton={true}
+        />
         <div className="body-container w-full md:h-[80vh] flex flex-row mt-5 md:mt-0">
           <div className="contacts-container hidden md:block md:w-[250px]">
             <div className="search-bar-container w-full flex flex-col items-center justify-center h-[12%]">
@@ -195,7 +200,7 @@ const Home = () => {
                   ))}
             </div>
           </div>
-          {/* <div className="divider hidden md:block bg-slate-300 h-100 border-l dark:bg-gray-900 dark:border-purple-700"></div> */}
+          <div className="divider hidden md:block bg-slate-300 h-100 border-l dark:bg-gray-900 dark:border-purple-700"></div>
           <div className="chat-parent-container w-screen md:w-[750px]">
             <div className="chat-title-container flex flex-row items-center gap-3 px-5 w-[100%] h-14 justify-between">
               {activeChat && (
@@ -215,6 +220,7 @@ const Home = () => {
                   </div>
                 </div>
               )}
+              <IoIosArrowDown className="md:hidden" />
               <div className="chat-lang-container w-[160px] md:w-[200px] ">
                 <LanguageSelector
                   onLangChange={handleLanguageChange}
