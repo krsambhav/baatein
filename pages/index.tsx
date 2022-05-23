@@ -251,7 +251,7 @@ const Home = () => {
               </div>
             </div>
             <div
-              className={`chat-box-container mt-3 md:mt-0 h-[60vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 ${showContacts && 'blur-lg'}`}
+              className={`chat-box-container mt-3 md:mt-0 h-[60vh] md:h-[550px] overflow-y-scroll overflow-x-hidden pt-5 text-sm flex flex-col gap-3 px-3 transition-all duration-150 ${showContacts && 'blur-lg'}`}
               ref={chatBoxRef}
             >
               {fetchedMessages &&
