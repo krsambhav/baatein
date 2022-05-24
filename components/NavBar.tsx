@@ -14,9 +14,10 @@ export default function NavBar({theme, onClick, showThemeButton}:{theme?:any, on
     <div className="nav-bar flex flex-row justify-between md:w-full px-3 md:px-0 w-[100vw] mt-5 md:mt-0">
       <Link href={"/"}>
         <a>
-          <div className="title text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 cursor-pointer">
+          {/* <div className="title text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 cursor-pointer">
             Baatein
-          </div>
+          </div> */}
+          <Image src='/static/logo.png' width={100} height={100} />
         </a>
       </Link>
       <div className=" flex flex-row items-center gap-5">
