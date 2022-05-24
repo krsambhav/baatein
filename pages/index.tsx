@@ -79,6 +79,8 @@ const Home = () => {
     localStorage.setItem("activeChat", String(JSON.stringify(user)));
     setFetchedMessaged([]);
     setActiveChat(user);
+    setSearchBarInput("");
+    setShowContacts(false);
     // console.log(user)
   };
 
@@ -146,7 +148,6 @@ const Home = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-
   const refreshMessages = () => {
     console.log("Pushed");
     // console.log(activeChat);
@@ -181,22 +182,21 @@ const Home = () => {
   // }, []);
 
   useEffect(() => {
-    const pusher = new Pusher('3641ccfa046551ca870f', {
+    const pusher = new Pusher("3641ccfa046551ca870f", {
       cluster: "ap2",
     });
     const channel = pusher.subscribe("chat");
     // console.log("Updated data : ", activeChat);
-    if(channel && channel.bind && activeChat){
+    if (channel && channel.bind && activeChat) {
       console.log("Unbinding Event");
-      channel.unbind('chat-event');
+      channel.unbind("chat-event");
       console.log("Rebinding Event");
-      channel.bind('chat-event', (pusherData) => {
-        if(pusherData.targetUser == activeChat.email)
-        fetchMessages(session?.user, activeChat);
-      })
+      channel.bind("chat-event", (pusherData) => {
+        if (pusherData.targetUser == activeChat.email)
+          fetchMessages(session?.user, activeChat);
+      });
     }
-}, [activeChat]);
-  
+  }, [activeChat]);
 
   return (
     <div
@@ -228,6 +228,7 @@ const Home = () => {
                 id="search-bar"
                 className="focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-xs outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500 transition-all duration-300"
                 placeholder="Peter Griffin"
+                value={searchBarInput}
                 onChange={(e) => {
                   setSearchBarInput(e.target.value);
                 }}
@@ -290,25 +291,52 @@ const Home = () => {
                 onClick={() => setShowContacts(!showContacts)}
               />
               {showContacts && (
-                <>
-                  <div className="mobile-contacts-container fixed top-48 w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
+                <div className="z-20 w-[90vw] flex flex-col fixed top-48 h-[60vh] items-center">
+                  <input
+                    className="mobile-search-bar md:hidden px-3 py-1 shadow-xl z-20 top-40 outline-none mb-5 w-[200px]"
+                    placeholder="Peter Griffin"
+                    value={searchBarInput}
+                    onChange={(e) => {
+                      setSearchBarInput(e.target.value);
+                    }}
+                  />
+                  <div className="mobile-contacts-container w-[90%] dark:bg-gray-900 dark:border rounded-lg dark:border-red-500 z-20 h-[50vh] overflow-y-scroll">
                     {userList &&
                       session &&
-                      userList
-                        .filter((user) => user.email !== session?.user?.email)
-                        .map((user, index) => (
-                          <PersonCard
-                            key={index}
-                            imageURL={user.image}
-                            name={user.name}
-                            onClick={() => {
-                              handleChangeActiveChat(user);
-                              setShowContacts(false);
-                            }}
-                          />
-                        ))}
+                      (searchBarInput === ""
+                        ? userList
+                            .filter(
+                              (user) => user.email !== session?.user?.email
+                            )
+                            .map((user, index) => (
+                              <PersonCard
+                                key={index}
+                                imageURL={user.image}
+                                name={user.name}
+                                onClick={() => handleChangeActiveChat(user)}
+                              />
+                            ))
+                        : userList
+                            .filter(
+                              (user) => user.email !== session?.user?.email
+                            )
+                            .filter(
+                              (user) =>
+                                user.name
+                                  .substring(0, searchBarInput.length)
+                                  .toLowerCase() ===
+                                searchBarInput.toLowerCase()
+                            )
+                            .map((user, index) => (
+                              <PersonCard
+                                key={index}
+                                imageURL={user.image}
+                                name={user.name}
+                                onClick={() => handleChangeActiveChat(user)}
+                              />
+                            )))}
                   </div>
-                </>
+                </div>
               )}
               <div className="chat-lang-container w-[160px] md:w-[200px] ">
                 <LanguageSelector
