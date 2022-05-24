@@ -1,4 +1,13 @@
 import clientPromise from "../../lib/mongodb";
+import Pusher from "pusher";
+
+const pusher = new Pusher({
+  appId: "1413203",
+  key: "3641ccfa046551ca870f",
+  secret: "c0dcbd2162ebed0a4925",
+  cluster: "ap2",
+  useTLS: true
+});
 
 export default async function handler(req, res) {
   const client = await clientPromise;
@@ -11,6 +20,10 @@ export default async function handler(req, res) {
         .collection("chatData")
         .insertOne(bodyObject);
       res.json(newChat);
+      pusher.trigger('chat', 'chat-event', {
+        'messageSent' : true,
+        'targetUser': bodyObject.to
+      })
       break;
     case "GET":
       console.log(req.body)

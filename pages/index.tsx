@@ -10,6 +10,7 @@ import NavBar from "../components/NavBar";
 import { getSession, useSession } from "next-auth/react";
 import getUuidByString from "uuid-by-string";
 import { IoIosArrowDown } from "react-icons/io";
+import Pusher from "pusher-js";
 
 const Home = () => {
   const [userList, setUserList] = useState<any>();
@@ -37,9 +38,9 @@ const Home = () => {
         sourceMsg: inputMessage,
       };
       // console.log(msgData);
-      handleMessageSend(msgData).then(() =>
-        fetchMessages(session?.user, activeChat)
-      );
+      handleMessageSend(msgData).then(() => {
+        fetchMessages(session?.user, activeChat);
+      });
     }
     return;
   };
@@ -48,8 +49,8 @@ const Home = () => {
     const getTargetLanguage = await fetch("/api/getlang/" + activeChat.email)
       .then((res) => res.json())
       .then((data) => data.data[0]);
-    console.log(getTargetLanguage);
-    console.log(message);
+    // console.log(getTargetLanguage);
+    // console.log(message);
     let requestMsgParams = {
       targetLanguage: getTargetLanguage["lang"],
       msgText: message.sourceMsg,
@@ -62,7 +63,7 @@ const Home = () => {
     const getTranslatedMessage = await fetch("/api/translate", requestOptions)
       .then((res) => res.json())
       .then((data) => data.data);
-    console.log(getTranslatedMessage);
+    // console.log(getTranslatedMessage);
     requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,12 +71,11 @@ const Home = () => {
     };
     const res = await fetch("/api/chats", requestOptions);
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
   };
 
   const handleChangeActiveChat = (user: any) => {
-    if(activeChat === user)
-      return;
+    if (activeChat === user) return;
     localStorage.setItem("activeChat", String(JSON.stringify(user)));
     setFetchedMessaged([]);
     setActiveChat(user);
@@ -146,14 +146,56 @@ const Home = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+
+  const refreshMessages = () => {
+    console.log("Pushed");
+    // console.log(activeChat);
+    fetchMessages(session?.user, activeChat);
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [fetchMessages]);
 
   useEffect(() => {
     const aC = JSON.parse(localStorage.getItem("activeChat") || "null");
-    if (aC != "null") setActiveChat(aC);
+    // console.log(aC)
+    if (aC == "null") return;
+    setActiveChat(aC);
   }, []);
+
+  // useEffect(() => {
+  //   const pusher = new Pusher("3641ccfa046551ca870f", {
+  //     cluster: "ap2",
+  //   });
+  //   const channel = pusher.subscribe("chat");
+  //   channel.bind("chat-event", function (data) {
+  //     setInterval(() => {
+  //       console.log(activeChat);
+  //     }, 1000)
+  //     if (data.targetUser === session?.user?.email) refreshMessages();
+  //   });
+  //   return () => {
+  //     pusher.unsubscribe("chat");
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    const pusher = new Pusher('3641ccfa046551ca870f', {
+      cluster: "ap2",
+    });
+    const channel = pusher.subscribe("chat");
+    console.log("Updated data : ", activeChat);
+    if(channel && channel.bind && activeChat){
+      console.log("Unbinding Event");
+      channel.unbind('chat-event');
+      console.log("Rebinding Event");
+      channel.bind('chat-event', (pusherData) => {
+        fetchMessages(session?.user, activeChat);
+      })
+    }
+}, [activeChat]);
+  
 
   return (
     <div
@@ -186,32 +228,40 @@ const Home = () => {
                 className="focus:shadow-xl drop-shadow w-10/12 px-2 py-1 text-xs outline-none h-8 dark:bg-gray-900 dark:border dark:border-purple-500 transition-all duration-300"
                 placeholder="Peter Griffin"
                 onChange={(e) => {
-                  setSearchBarInput(e.target.value)
+                  setSearchBarInput(e.target.value);
                 }}
               />
             </div>
             <div className="contact-list-container h-[70%] overflow-y-scroll flex flex-col">
               {userList &&
                 session &&
-                (searchBarInput === '' ? userList
-                .filter((user) => user.email !== session?.user?.email)
-                .map((user, index) => (
-                  <PersonCard
-                    key={index}
-                    imageURL={user.image}
-                    name={user.name}
-                    onClick={() => handleChangeActiveChat(user)}
-                  />
-                )) : userList
-                .filter((user) => user.email !== session?.user?.email).filter((user) => user.name.substring(0,searchBarInput.length).toLowerCase() === searchBarInput.toLowerCase())
-                .map((user, index) => (
-                  <PersonCard
-                    key={index}
-                    imageURL={user.image}
-                    name={user.name}
-                    onClick={() => handleChangeActiveChat(user)}
-                  />
-                )) )}
+                (searchBarInput === ""
+                  ? userList
+                      .filter((user) => user.email !== session?.user?.email)
+                      .map((user, index) => (
+                        <PersonCard
+                          key={index}
+                          imageURL={user.image}
+                          name={user.name}
+                          onClick={() => handleChangeActiveChat(user)}
+                        />
+                      ))
+                  : userList
+                      .filter((user) => user.email !== session?.user?.email)
+                      .filter(
+                        (user) =>
+                          user.name
+                            .substring(0, searchBarInput.length)
+                            .toLowerCase() === searchBarInput.toLowerCase()
+                      )
+                      .map((user, index) => (
+                        <PersonCard
+                          key={index}
+                          imageURL={user.image}
+                          name={user.name}
+                          onClick={() => handleChangeActiveChat(user)}
+                        />
+                      )))}
             </div>
           </div>
           <div className="divider hidden md:block bg-slate-300 h-[650px] border-l dark:bg-gray-900 dark:border-purple-700 ml-5"></div>
