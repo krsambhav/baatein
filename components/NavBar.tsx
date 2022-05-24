@@ -5,9 +5,19 @@ import Link from "next/link";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import { MdOutlineLogout } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
-import logo from '../public/static/logo.png';
+import Logo from '../public/static/logo.svg';
+// import {ReactComponent as Log} from '../public/static/logo.svg';
+// import { ReactSVG } from "react-svg";
 
-export default function NavBar({theme, onClick, showThemeButton}:{theme?:any, onClick?:any, showThemeButton?:any}) {
+export default function NavBar({
+  theme,
+  onClick,
+  showThemeButton,
+}: {
+  theme?: any;
+  onClick?: any;
+  showThemeButton?: any;
+}) {
   const session = useSession();
   // console.log(session);
   const userPic = session?.data?.user?.image;
@@ -17,18 +27,23 @@ export default function NavBar({theme, onClick, showThemeButton}:{theme?:any, on
         <a>
           {/* <div className="title text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 cursor-pointer">
             Baatein
-          </div> */}
-          <Image src={logo} width={100} height={100} />
+       </div> */}
+          {/* <ReactSVG src='https://www.svgrepo.com/download/418987/fastfood-food-hamburger.svg' /> */}
+          {/* <Logo /> */}
+          {/* <Image src={logo} height={100} width={100} style={{'color':'red', 'backgroundColor':'red', 'fill':'red', 'stroke' : 'red'}} /> */}
+          <Logo className='w-20 h-20 dark:fill-white' />
         </a>
       </Link>
       <div className="flex flex-row items-center gap-5">
-        {showThemeButton && <DarkModeSwitch
-          checked={theme}
-          onChange={onClick}
-          size={18}
-          moonColor={"white"}
-          sunColor={"black"}
-        />}
+        {showThemeButton && (
+          <DarkModeSwitch
+            checked={theme}
+            onChange={onClick}
+            size={18}
+            moonColor={"white"}
+            sunColor={"black"}
+          />
+        )}
         {session?.status == "authenticated" && (
           <span className="cursor-pointer rotate-180" onClick={() => signOut()}>
             <MdOutlineLogout />
