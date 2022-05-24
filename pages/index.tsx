@@ -212,7 +212,7 @@ const Home = () => {
         />
       </Head>
       <div
-        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center md:px-10 md:py-10 md:gap-10 w-screen md:flex md:w-[1000px] m-auto h-[90vh] md:h-[800px] dark:transition-all dark:duration-300 md:shadow-xl`}
+        className={`dark:bg-gray-900 dark:text-white main-container flex-col items-center md:px-10 md:py-0 md:gap-0 w-screen md:flex md:w-[1000px] m-auto h-[90vh] md:h-[800px] dark:transition-all dark:duration-300 md:shadow-xl`}
       >
         <NavBar
           onClick={handleThemeChange}

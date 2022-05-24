@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import { MdOutlineLogout } from "react-icons/md";
 import { FaUserCircle } from "react-icons/fa";
+import logo from '../public/static/logo.png';
 
 export default function NavBar({theme, onClick, showThemeButton}:{theme?:any, onClick?:any, showThemeButton?:any}) {
   const session = useSession();
@@ -17,10 +18,10 @@ export default function NavBar({theme, onClick, showThemeButton}:{theme?:any, on
           {/* <div className="title text-3xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 cursor-pointer">
             Baatein
           </div> */}
-          <Image src='/static/logo.png' width={100} height={100} />
+          <Image src={logo} width={100} height={100} />
         </a>
       </Link>
-      <div className=" flex flex-row items-center gap-5">
+      <div className="flex flex-row items-center gap-5">
         {showThemeButton && <DarkModeSwitch
           checked={theme}
           onChange={onClick}
