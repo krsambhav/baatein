@@ -185,12 +185,13 @@ const Home = () => {
       cluster: "ap2",
     });
     const channel = pusher.subscribe("chat");
-    console.log("Updated data : ", activeChat);
+    // console.log("Updated data : ", activeChat);
     if(channel && channel.bind && activeChat){
       console.log("Unbinding Event");
       channel.unbind('chat-event');
       console.log("Rebinding Event");
       channel.bind('chat-event', (pusherData) => {
+        if(pusherData.targetUser == activeChat.email)
         fetchMessages(session?.user, activeChat);
       })
     }
