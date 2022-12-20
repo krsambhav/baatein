@@ -18,7 +18,7 @@ export default function login(params) {
         />
       </Head>
       <NavBar showThemeButton={false} />
-      <div className="login-container flex flex-col gap-20 items-center" onClick={() => signIn('google')}>
+      {/* <div className="login-container flex flex-col gap-20 items-center" onClick={() => signIn('google')}>
         <div className="login-title title text-2xl font-normal text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600">
           Please Login To Continue
         </div>
@@ -30,7 +30,7 @@ export default function login(params) {
             <div className="text">Login With Google</div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
